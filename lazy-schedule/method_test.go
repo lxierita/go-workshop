@@ -1,7 +1,6 @@
 package lazys_test
 
 import (
-	"fmt"
 	. "lazys"
 	"testing"
 )
@@ -26,13 +25,10 @@ func TestLazyScheduler_should_execute_functions_in_order(t *testing.T) {
 	ls.Add(f1, []int{1, 2, 3})
 	ls.Add(f2, []int{1, 2})
 
-	fmt.Println(len(Scheduled))
-
-	ls.Run()
-	got := ls.Result
+	got := ls.Run()
 
 	if diff := compare(got, want); diff != 0 {
-		t.Errorf("Scheduler.run() = %d; want [6, 2]", got)
+		t.Errorf("Scheduler.Run() = %d; want [6, 2]", got)
 	}
 
 }

@@ -1,29 +1,29 @@
 package lazys
 
 import (
-	"fmt"
 	"reflect"
 	"regexp"
 	"runtime"
 )
 
 type Scheduler struct {
-	Result []int
 }
 
-var Scheduled []interface{}
+var Scheduled = make([]interface{}, 0)
 
 func (s Scheduler) Add(f func(...int) int, args []int) {
-	toAdd := func() {
-		f(args...)
+	toAdd := func() int {
+		return f(args...)
 	}
 	Scheduled = append(Scheduled, toAdd)
 }
 
-func (s Scheduler) Run() {
-	for i, f := range Scheduled {
-		fmt.Println(i, f)
+func (s Scheduler) Run() []int {
+	var result []int
+	for _, f := range Scheduled {
+		result = append(result, f.(func() int)())
 	}
+	return result
 }
 
 func GetName(f func(...int) int) string {
