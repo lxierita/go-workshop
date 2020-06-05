@@ -9,20 +9,19 @@ import (
 
 type Scheduler struct {
 	Result []int
-	Len    int
-	fs     []interface{}
 }
+
+var Scheduled []interface{}
 
 func (s Scheduler) Add(f func(...int) int, args []int) {
 	toAdd := func() {
 		f(args...)
 	}
-	s.fs = append(s.fs, toAdd)
-	s.Len = len(s.fs)
+	Scheduled = append(Scheduled, toAdd)
 }
 
 func (s Scheduler) Run() {
-	for i, f := range s.fs {
+	for i, f := range Scheduled {
 		fmt.Println(i, f)
 	}
 }

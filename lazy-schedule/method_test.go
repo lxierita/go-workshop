@@ -1,12 +1,19 @@
 package lazys_test
 
 import (
+	"fmt"
 	. "lazys"
 	"testing"
 )
 
+// func init() {
+// 	Scheduled = Scheduled[:0]
+// }
+
 func TestLazyScheduler_should_execute_functions_in_order(t *testing.T) {
+	// setup
 	ls := Scheduler{}
+	Scheduled = Scheduled[:0]
 
 	want := []int{6, 2}
 
@@ -18,6 +25,8 @@ func TestLazyScheduler_should_execute_functions_in_order(t *testing.T) {
 	}
 	ls.Add(f1, []int{1, 2, 3})
 	ls.Add(f2, []int{1, 2})
+
+	fmt.Println(len(Scheduled))
 
 	ls.Run()
 	got := ls.Result
