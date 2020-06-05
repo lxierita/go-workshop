@@ -7,20 +7,21 @@ import (
 )
 
 type Scheduler struct {
+	Scheduled []interface{}
 }
 
-var Scheduled = make([]interface{}, 0)
-
-func (s Scheduler) Add(f func(...int) int, args []int) {
+func (s Scheduler) Add(f func(...int) int, args []int) int {
 	toAdd := func() int {
 		return f(args...)
 	}
-	Scheduled = append(Scheduled, toAdd)
+	s.Scheduled = append(s.Scheduled, toAdd)
+	return len(s.Scheduled)
 }
 
 func (s Scheduler) Run() []int {
 	var result []int
-	for _, f := range Scheduled {
+
+	for _, f := range s.Scheduled {
 		result = append(result, f.(func() int)())
 	}
 	return result

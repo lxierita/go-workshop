@@ -16,11 +16,19 @@ func TestLazyScheduler_should_execute_functions_in_order(t *testing.T) {
 
 	want := []int{6, 2}
 
-	f1 := func(...int) int {
-		return 6
+	f1 := func(args ...int) int {
+		r := 0
+		for _, n := range args {
+			r += n
+		}
+		return r
 	}
-	f2 := func(...int) int {
-		return 2
+	f2 := func(args ...int) int {
+		r := 1
+		for _, n := range args {
+			r *= n
+		}
+		return r
 	}
 	ls.Add(f1, []int{1, 2, 3})
 	ls.Add(f2, []int{1, 2})
@@ -51,4 +59,31 @@ func compare(got, want []int) int {
 	}
 
 	return len(diff)
+}
+
+func BenchmarkLazyScheduler(b *testing.B) {
+	ls := Scheduler{}
+	Scheduled = Scheduled[:0]
+
+	f1 := func(args ...int) int {
+		r := 0
+		for _, n := range args {
+			r += n
+		}
+		return r
+	}
+	f2 := func(args ...int) int {
+		r := 1
+		for _, n := range args {
+			r *= n
+		}
+		return r
+	}
+	ls.Add(f1, []int{1, 2, 3})
+	ls.Add(f2, []int{1, 2})
+
+	for i := 0; i < b.N; i++ {
+		ls.Run()
+	}
+
 }
