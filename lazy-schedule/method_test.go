@@ -81,6 +81,7 @@ func BenchmarkLazyScheduler(b *testing.B) {
 	}
 	ls.Add(f1, []int{1, 2, 3})
 	ls.Add(f2, []int{1, 2})
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		ls.Run()
