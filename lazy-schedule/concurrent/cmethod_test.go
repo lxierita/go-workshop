@@ -61,7 +61,7 @@ func compare(got, want []int) int {
 	return len(diff)
 }
 
-func BenchmarkCLazyScheduler(b *testing.B) {
+func benchmarkRun(b *testing.B, scheduleNum int) {
 	ls := Scheduler{}
 	Scheduled = Scheduled[:0]
 
@@ -72,19 +72,25 @@ func BenchmarkCLazyScheduler(b *testing.B) {
 		}
 		return r
 	}
-	f2 := func(args ...int) int {
-		r := 1
-		for _, n := range args {
-			r *= n
-		}
-		return r
+
+	for i := 0; i < scheduleNum; i++ {
+		ls.Add(f1, []int{1, 2, 3})
 	}
-	ls.Add(f1, []int{1, 2, 3})
-	ls.Add(f2, []int{1, 2})
+
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		ls.Run()
 	}
 
+}
+
+func BenchmarkClazyScheduler_run100(b *testing.B) {
+	benchmarkRun(b, 100)
+}
+func BenchmarkClazyScheduler_run10000(b *testing.B) {
+	benchmarkRun(b, 10000)
+}
+func BenchmarkClazyScheduler_run1000000(b *testing.B) {
+	benchmarkRun(b, 1000000)
 }

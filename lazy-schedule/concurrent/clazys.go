@@ -21,15 +21,41 @@ func (s Scheduler) Add(f func(...int) int, args []int) int {
 
 func (s Scheduler) Run() []int {
 	var result []int
-
-	for _, f := range Scheduled {
-		go cal(result, f)
+	c := cal()
+	for {
+		select {
+		case i := <-c:
+			result = append(result, i)
+		default:
+			return result
+		}
 	}
-	return result
 }
 
-func cal(r []int, f interface{}) {
-	r = append(r, f.(func() int)())
+func cal() <-chan int {
+	c := make(chan int)
+
+	defer close(c)
+
+	//one routine for each
+	for _, f := range Scheduled {
+		go func() { c <- f.(func(...int) int)() }()
+	}
+
+	// divide task in half
+	// h := len(Scheduled) / 2
+	// go func() {
+	// 	for _, f := range Scheduled[:h] {
+	// 		c <- f.(func(...int) int)()
+	// 	}
+	// }()
+	// go func() {
+	// 	for _, f := range Scheduled[h:] {
+	// 		c <- f.(func(...int) int)()
+	// 	}
+	// }()
+
+	return c
 }
 
 func GetName(f func(...int) int) string {
