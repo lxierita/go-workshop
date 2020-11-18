@@ -1,7 +1,7 @@
-package lazys_test
+package part1_test
 
 import (
-	. "lazys"
+	. "part1"
 	"testing"
 )
 
